@@ -1,0 +1,261 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bellkit — Little tools for student life</title>
+  <meta name="description" content="Simple, free tools to make student life easier.">
+  <style>
+    :root {
+      --paper: #f5f1e8;
+      --ink: #282d2b;
+      --muted: #77786f;
+      --accent: #d18455;
+      --line: #ded8cc;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Arial, sans-serif;
+    }
+
+    header, main, footer {
+      width: min(100% - 36px, 680px);
+      margin: auto;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 27px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .logo {
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    .logo span { color: var(--accent); }
+
+    .tag {
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .intro { padding: 55px 0 30px; }
+
+    .eyebrow {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--muted);
+    }
+
+    h1 {
+      font-size: clamp(42px, 10vw, 68px);
+      letter-spacing: -3px;
+      line-height: 1.02;
+      margin: 18px 0;
+    }
+
+    h1 em {
+      color: var(--accent);
+      font-style: normal;
+    }
+
+    .intro p {
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 420px;
+      font-size: 15px;
+    }
+
+    .card {
+      background: #fffdf8;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px;
+      margin: 20px 0 45px;
+      box-shadow: 0 12px 35px #282d2b0a;
+    }
+
+    .card h2 {
+      font-size: 23px;
+      margin: 0 0 7px;
+      letter-spacing: -0.7px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 23px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      margin: 17px 0 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: white;
+      color: var(--ink);
+      font-size: 16px;
+    }
+
+    input:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 23px;
+      border: 0;
+      border-radius: 12px;
+      padding: 16px;
+      background: var(--ink);
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .2s, background .2s;
+    }
+
+    button:hover {
+      background: #414944;
+      transform: translateY(-2px);
+    }
+
+    #result {
+      display: none;
+      margin-top: 22px;
+      padding: 18px;
+      background: var(--paper);
+      border-radius: 13px;
+      line-height: 1.7;
+    }
+
+    .percent {
+      font-size: 38px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+
+    footer {
+      padding: 22px 0 35px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .doodle {
+      float: right;
+      color: var(--accent);
+      font-size: 30px;
+      transform: rotate(12deg);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">bellkit<span>.</span></div>
+    <div class="tag">A little help for student life</div>
+  </header>
+
+  <main>
+    <section class="intro">
+      <div class="eyebrow">Less chaos, more clarity <span class="doodle">✳</span></div>
+      <h1>College life,<br><em>made simpler.</em></h1>
+      <p>Small, useful tools for the everyday student. Free to use, easy to understand, and made to make life a little lighter.</p>
+    </section>
+
+    <section class="card">
+      <h2>Attendance calculator</h2>
+      <div class="hint">Find your current attendance and see how many classes you need to attend to reach your target.</div>
+
+      <label for="attended">Classes attended</label>
+      <input id="attended" type="number" min="0" step="1" placeholder="e.g. 36">
+
+      <label for="held">Total classes held</label>
+      <input id="held" type="number" min="1" step="1" placeholder="e.g. 48">
+
+      <label for="target">Required attendance (%)</label>
+      <input id="target" type="number" min="1" max="100" step="1" value="75">
+
+      <button id="calculate" type="button">Calculate my attendance ↗</button>
+      <div id="result" aria-live="polite"></div>
+    </section>
+  </main>
+
+  <footer>
+    <strong>bellkit.</strong> Little tools. Less college chaos.<br>
+    Free to use · No account required
+  </footer>
+
+  <script>
+    const attendedInput = document.getElementById('attended');
+    const heldInput = document.getElementById('held');
+    const targetInput = document.getElementById('target');
+    const result = document.getElementById('result');
+
+    document.getElementById('calculate').addEventListener('click', () => {
+      const a = Number(attendedInput.value);
+      const h = Number(heldInput.value);
+      const t = Number(targetInput.value);
+      const wholeNumbers = Number.isInteger(a) && Number.isInteger(h);
+
+      result.style.display = 'block';
+
+      if (
+        attendedInput.value === '' ||
+        heldInput.value === '' ||
+        targetInput.value === '' ||
+        !wholeNumbers || a < 0 || h <= 0 || a > h ||
+        !Number.isFinite(t) || t <= 0 || t > 100
+      ) {
+        result.textContent = 'Please enter valid class counts and a target between 1% and 100%. Attended classes cannot exceed total classes.';
+        return;
+      }
+
+      const percentage = (a / h) * 100;
+      let advice = '';
+
+      if (percentage + 1e-9 < t) {
+        if (t === 100) {
+          advice = 'To reach 100%, you must attend every future class, but previous absences mean you cannot reach exactly 100% through future classes alone.';
+        } else {
+          const needed = Math.ceil((t * h - 100 * a) / (100 - t) - 1e-10);
+          advice = 'Attend the next ' + needed + ' consecutive classes to reach your target, assuming no more classes are missed.';
+        }
+      } else {
+        const canMiss = Math.floor((100 * a / t) - h + 1e-9);
+        advice = canMiss > 0
+          ? 'You can miss up to ' + canMiss + ' future classes before dropping below your target, assuming the target stays the same.'
+          : 'You are at your target, but have no future classes to spare without risking dropping below it.';
+      }
+
+      result.innerHTML =
+        '<div class="percent">' + percentage.toFixed(1) + '%</div>' +
+        '<strong>Current attendance</strong><br>' +
+        advice;
+    });
+  </script>
+</body>
+  </html>
+  
