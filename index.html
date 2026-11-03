@@ -4,456 +4,904 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f7f7f2">
-<meta name="description" content="Bellkit — a smarter, simpler toolkit for student life. Track attendance and plan your semester.">
+<meta name="description" content="Bellkit — a calm, colourful student dashboard for attendance, subjects, self-study, exams and study streaks.">
 <title>Bellkit — Your Semester, Simplified</title>
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
-
-:root {
-  --bg:#f7f7f2;
-  --ink:#20241f;
-  --muted:#777c73;
-  --line:#e5e6dc;
-  --green:#c9f36a;
-  --purple:#dcd3ff;
-  --pink:#ffd9e9;
-  --blue:#d5e8ff;
-  --orange:#ffdfb9;
-  --white:#fff;
-  --radius:24px;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{
-  background:var(--bg);color:var(--ink);
-  font-family:Manrope,system-ui,sans-serif;
-  overflow-x:hidden;
-}
-button,input{font:inherit}
-button{cursor:pointer}
-a{color:inherit;text-decoration:none}
-::selection{background:var(--green);color:var(--ink)}
-
-.wrap{width:min(1160px,92%);margin:auto}
-.topbar{
-  min-height:76px;display:flex;align-items:center;
-  justify-content:space-between;gap:16px;
-  border-bottom:1px solid var(--line);
-}
-.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:24px;letter-spacing:-1.3px}
-.brandmark{
-  width:36px;height:36px;border-radius:12px;
-  background:var(--ink);color:var(--green);
-  display:grid;place-items:center;font-size:21px;
-  transform:rotate(-5deg);
-}
-.brand small{display:block;font-size:10px;color:var(--muted);letter-spacing:1.3px;font-weight:500}
-.pill{
-  display:inline-flex;align-items:center;gap:8px;
-  border:1px solid var(--line);border-radius:100px;
-  padding:9px 13px;font-size:11px;font-weight:700;
-  background:#ffffffa8;
-}
-.dot{width:7px;height:7px;background:#74b844;border-radius:50%}
-.hero{padding:50px 0 26px}
-.eyebrow{
-  font:11px "DM Mono",monospace;color:var(--muted);
-  text-transform:uppercase;letter-spacing:1.5px;
-}
-h1{
-  margin-top:16px;font-size:clamp(44px,8vw,88px);
-  letter-spacing:-.075em;line-height:.98;font-weight:800;
-  max-width:800px;
-}
-h1 em{font-style:normal;color:#818f60}
-.hero-row{
-  display:flex;justify-content:space-between;align-items:end;
-  gap:24px;margin-top:22px;
-}
-.hero-row p{color:var(--muted);line-height:1.8;font-size:14px;max-width:450px}
-.hero-note{font:10px "DM Mono",monospace;color:var(--muted);text-align:right}
-
-.grid{
-  display:grid;grid-template-columns:repeat(12,minmax(0,1fr));
-  gap:14px;padding:20px 0 60px;
-}
-.card{
-  min-width:0;position:relative;overflow:hidden;
-  border:1px solid #20241f0b;border-radius:var(--radius);
-  padding:24px;background:var(--white);
-  transition:transform .25s ease,box-shadow .25s ease;
-  transform-style:preserve-3d;
-}
-.card:hover{box-shadow:0 15px 40px #20241f0c}
-.card:active{transform:scale(.985)}
-.attendance{grid-column:span 7;background:var(--green);min-height:390px}
-.visual{grid-column:span 5;background:var(--purple);min-height:390px}
-.stat{grid-column:span 4;background:var(--white);min-height:170px}
-.tip{grid-column:span 4;background:var(--pink);min-height:170px}
-.schedule{grid-column:span 4;background:var(--blue);min-height:170px}
-.chart-card{grid-column:span 7;background:#fff;min-height:270px}
-.goal-card{grid-column:span 5;background:var(--orange);min-height:270px}
-.section-label{
-  display:flex;justify-content:space-between;align-items:center;
-  gap:12px;font:10px "DM Mono",monospace;
-  text-transform:uppercase;letter-spacing:1px;
-}
-.mini-icon{
-  display:grid;place-items:center;width:34px;height:34px;
-  border:1px solid #20241f20;border-radius:50%;font-size:15px;
-}
-.attendance h2{
-  font-size:clamp(28px,4.4vw,47px);
-  line-height:1.06;letter-spacing:-.065em;
-  margin:28px 0 12px;max-width:440px;
-}
-.sub{font-size:12px;line-height:1.7;color:#3e4934}
-.fields{
-  display:grid;grid-template-columns:1fr 1fr;gap:10px;
-  margin-top:23px;
-}
-.field label{display:block;font-size:10px;font-weight:800;margin-bottom:7px}
-.field input{
-  width:100%;min-width:0;padding:13px;
-  border:1px solid #20241f26;border-radius:12px;
-  background:#ffffffa6;color:var(--ink);outline:none;
-}
-.field input:focus{border-color:#20241f;box-shadow:0 0 0 3px #20241f0c}
-.action{
-  border:0;border-radius:12px;background:var(--ink);
-  color:#fff;padding:14px 17px;font-size:12px;
-  font-weight:800;transition:transform .2s,opacity .2s;
-}
-.action:active{transform:scale(.96)}
-.action.secondary{background:#ffffffa8;color:var(--ink);border:1px solid #20241f20}
-.attendance .action{width:100%;margin-top:12px}
-.result-row{display:flex;align-items:center;gap:17px;margin-top:23px}
-.ring{
-  width:88px;height:88px;flex:0 0 88px;position:relative;
-}
-.ring svg{width:100%;height:100%;transform:rotate(-90deg)}
-.ring circle{fill:none;stroke-width:8}
-.ring .track{stroke:#20241f19}
-.ring .value{
-  stroke:var(--ink);stroke-linecap:round;
-  stroke-dasharray:251.2;stroke-dashoffset:251.2;
-  transition:stroke-dashoffset 1s cubic-bezier(.2,.8,.2,1);
-}
-.ring-text{position:absolute;inset:0;display:grid;place-items:center;font-size:16px;font-weight:800}
-.result-title{font-size:14px;font-weight:800}
-.result-copy{font-size:11px;color:#3e4934;line-height:1.6;margin-top:4px}
-.visual{display:flex;flex-direction:column}
-.visual h3{font-size:28px;letter-spacing:-1.5px;line-height:1.1;margin-top:25px;max-width:260px}
-.visual p{font-size:12px;line-height:1.7;margin-top:10px;color:#4e466d}
-.orbit-area{position:relative;flex:1;min-height:170px;margin-top:8px}
-.orbit{
-  position:absolute;border:1px solid #7263b65c;border-radius:50%;
-  left:50%;top:52%;transform:translate(-50%,-50%);
-  transition:transform .2s ease-out;
-}
-.orbit.one{width:110px;height:110px}
-.orbit.two{width:175px;height:175px}
-.orbit.three{width:240px;height:240px}
-.orbit-dot{
-  position:absolute;width:13px;height:13px;border-radius:50%;
-  background:#7763df;border:3px solid #f5f0ff;
-  left:calc(50% + 75px);top:calc(52% - 48px);
-  box-shadow:0 0 0 5px #7763df18;
-}
-.spark{
-  position:absolute;right:15%;top:10%;
-  font-size:24px;animation:float 4s ease-in-out infinite;
-}
-.stat h3{font-size:clamp(32px,5vw,51px);letter-spacing:-3px;margin-top:25px}
-.stat p,.tip p,.schedule p{font-size:11px;line-height:1.7;color:var(--muted);margin-top:7px}
-.stat .change{font:10px "DM Mono",monospace;color:#64813e;margin-top:8px}
-.tip h3,.schedule h3{font-size:20px;line-height:1.2;letter-spacing:-.8px;margin-top:24px}
-.tip .scribble{font-size:28px;position:absolute;right:20px;top:16px;transform:rotate(12deg)}
-.schedule .bars{display:flex;align-items:end;gap:6px;height:44px;margin-top:15px}
-.bars i{display:block;flex:1;border-radius:5px 5px 2px 2px;background:#7ba4dc;animation:barIn .9s both}
-.bars i:nth-child(1){height:38%}.bars i:nth-child(2){height:70%}
-.bars i:nth-child(3){height:50%}.bars i:nth-child(4){height:95%}
-.bars i:nth-child(5){height:62%}.bars i:nth-child(6){height:82%}
-.chart-card h3,.goal-card h3{font-size:25px;letter-spacing:-1.2px;margin-top:22px}
-.chart-card p,.goal-card p{font-size:11px;color:var(--muted);line-height:1.7;margin-top:7px}
-.chart-wrap{margin-top:20px;width:100%;height:120px}
-.chart-wrap svg{width:100%;height:100%;overflow:visible}
-.chart-line{
-  fill:none;stroke:#8a78ed;stroke-width:3;stroke-linecap:round;
-  stroke-dasharray:600;stroke-dashoffset:600;
-  animation:drawLine 2s .3s ease forwards;
-}
-.chart-fill{fill:url(#chartGradient);opacity:.6}
-.chart-point{fill:#8a78ed;transform-box:fill-box;transform-origin:center;animation:pulse 2s infinite}
-.goal-number{font-size:clamp(45px,7vw,76px);font-weight:800;letter-spacing:-5px;margin-top:15px}
-.goal-bar{height:8px;background:#20241f15;border-radius:10px;overflow:hidden;margin-top:18px}
-.goal-bar span{display:block;width:0;height:100%;background:#20241f;border-radius:10px;transition:width 1.2s ease}
-.goal-bottom{display:flex;justify-content:space-between;font:10px "DM Mono",monospace;margin-top:9px}
-.footer{padding:25px 0 40px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;color:var(--muted);font:10px "DM Mono",monospace}
-.footer a{text-decoration:underline;text-underline-offset:3px}
-
-.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
-.reveal.visible{opacity:1;transform:translateY(0)}
-@keyframes float{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 -9px;rotate:5deg}}
-@keyframes pulse{0%,100%{scale:1}50%{scale:1.35}}
-@keyframes drawLine{to{stroke-dashoffset:0}}
-@keyframes barIn{from{transform:scaleY(.1);transform-origin:bottom}to{transform:scaleY(1);transform-origin:bottom}}
-
-@media(min-width:900px){
-  .attendance{grid-column:span 7}
-  .visual{grid-column:span 5}
-}
-@media(max-width:700px){
-  .wrap{width:92%}
-  .topbar{min-height:65px}
-  .brand{font-size:21px}
-  .hero{padding-top:38px}
-  .hero-row{align-items:start;flex-direction:column}
-  .hero-note{text-align:left}
-  .grid{gap:10px;padding-top:12px}
-  .card{padding:17px;border-radius:20px}
-  .attendance{grid-column:span 12;min-height:0}
-  .visual{grid-column:span 12;min-height:320px}
-  .stat{grid-column:span 6;min-height:155px}
-  .tip{grid-column:span 6;min-height:155px}
-  .schedule{grid-column:span 12;min-height:155px}
-  .chart-card{grid-column:span 12;min-height:245px}
-  .goal-card{grid-column:span 12;min-height:230px}
-  .attendance h2{font-size:36px}
-  .fields{gap:9px}
-  .field input{padding:12px 10px}
-  .orbit-area{min-height:180px}
-}
-@media(prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
-}
+:root{--bg:#f7f7f2;--ink:#20241f;--muted:#777c73;--line:#e5e6dc;--green:#c9f36a;--purple:#dcd3ff;--pink:#ffd9e9;--blue:#d5e8ff;--orange:#ffdfb9;--mint:#d9f3e4;--white:#fff;--radius:24px;--shadow:0 16px 38px #20241f0b}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:18px}body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,sans-serif;overflow-x:hidden}button,input,select,textarea{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #7e8f55;outline-offset:2px}::selection{background:var(--green);color:var(--ink)}
+.wrap{width:min(1280px,94%);margin:auto}.mono,.eyebrow,.section-label,.tag,.tiny-label{font-family:"DM Mono",monospace;text-transform:uppercase;letter-spacing:1px}.topbar{height:78px;display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:10px;font-size:22px;letter-spacing:-1.2px;font-weight:800}.brandmark{width:38px;height:38px;border-radius:13px;background:var(--ink);color:var(--green);display:grid;place-items:center;font-size:21px;transform:rotate(-5deg)}.brand small{display:block;font-size:9px;color:var(--muted);letter-spacing:1.4px;font-weight:600}.topright{display:flex;align-items:center;gap:8px}.today-pill{display:flex;align-items:center;gap:8px;padding:9px 13px;background:#ffffffa8;border:1px solid var(--line);border-radius:99px;font-size:11px;font-weight:800}.status-dot{width:7px;height:7px;background:#6aa34d;border-radius:100%}.icon-btn{width:40px;height:40px;border:1px solid var(--line);border-radius:13px;background:white;display:grid;place-items:center;font-size:18px}.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px;align-items:start;padding:24px 0 44px}.sidebar{position:sticky;top:16px;align-self:start;padding:12px 0}.nav-title{font:10px "DM Mono",monospace;color:#96998e;letter-spacing:1.5px;margin:12px 12px 10px}.nav-list{display:grid;gap:6px}.nav-btn{border:0;background:transparent;color:#686e63;text-align:left;width:100%;border-radius:15px;padding:13px 12px;display:flex;align-items:center;gap:11px;font-size:12px;font-weight:800;transition:background .2s,color .2s,transform .2s}.nav-btn:hover{background:#ffffffb5;transform:translateX(2px)}.nav-btn.active{background:var(--ink);color:white;box-shadow:0 8px 20px #20241f14}.nav-icon{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:#ffffffad;color:var(--ink);font-size:15px}.nav-btn.active .nav-icon{background:var(--green)}.sidebar-note{margin:26px 4px 0;padding:16px;border-radius:18px;background:var(--purple);font-size:11px;line-height:1.7}.sidebar-note b{display:block;font-size:12px;margin-bottom:5px}.main{min-width:0}.view{display:none;animation:rise .32s ease both}.view.active{display:block}@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}.welcome{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:10px 0 22px}.eyebrow{font-size:10px;color:var(--muted)}h1,h2,h3,p{margin-top:0}h1{font-size:clamp(30px,5vw,49px);letter-spacing:-2.9px;line-height:1.02;margin:10px 0 10px;font-weight:800}h1 em{font-style:normal;color:#7e8f55}.welcome p,.muted{color:var(--muted);font-size:13px;line-height:1.75;margin-bottom:0}.date-stamp{text-align:right;min-width:130px}.date-stamp strong{display:block;font-size:14px}.date-stamp span{font:10px "DM Mono",monospace;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:14px}.card{min-width:0;border:1px solid #20241f0b;border-radius:var(--radius);padding:22px;background:var(--white);box-shadow:0 3px 14px #20241f04;overflow:hidden;transition:transform .22s,box-shadow .22s}.card:hover{box-shadow:var(--shadow)}.span-12{grid-column:span 12}.span-8{grid-column:span 8}.span-7{grid-column:span 7}.span-6{grid-column:span 6}.span-5{grid-column:span 5}.span-4{grid-column:span 4}.span-3{grid-column:span 3}.c-green{background:var(--green)}.c-purple{background:var(--purple)}.c-pink{background:var(--pink)}.c-blue{background:var(--blue)}.c-orange{background:var(--orange)}.c-mint{background:var(--mint)}.section-label{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:9px;color:#64695f;margin-bottom:14px}.section-label .num{background:#ffffffa6;border-radius:99px;padding:6px 9px;font-weight:500}.card h2{font-size:25px;line-height:1.15;letter-spacing:-1px;margin-bottom:9px}.card h3{font-size:16px;letter-spacing:-.4px;margin-bottom:7px}.card p{font-size:12px;line-height:1.7;color:#62675d}.big-num{font-size:clamp(31px,4vw,45px);font-weight:800;letter-spacing:-2px;line-height:1}.metric-caption{font-size:11px;color:#666c61;margin-top:8px}.metric-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:18px;font-size:10px;color:#686d63}.metric-bar{height:7px;background:#20241f12;border-radius:99px;overflow:hidden;margin-top:12px}.metric-bar span{height:100%;display:block;width:0;background:var(--ink);border-radius:99px;transition:width .5s ease}.btn{border:0;border-radius:13px;background:var(--ink);color:white;padding:12px 16px;font-size:11px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .18s,opacity .18s}.btn:hover{transform:translateY(-1px)}.btn:active{transform:scale(.98)}.btn.light{background:#ffffffd9;color:var(--ink);border:1px solid #20241f12}.btn.outline{background:transparent;border:1px solid #20241f28;color:var(--ink)}.btn.small{padding:8px 11px;font-size:10px;border-radius:10px}.btn.danger{background:#9a3f45}.btn.full{width:100%}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.feature-card{position:relative;border:1px solid #20241f0b;border-radius:20px;padding:17px;min-height:156px;text-align:left;background:white;transition:transform .2s,box-shadow .2s;display:flex;flex-direction:column;align-items:flex-start}.feature-card:hover{transform:translateY(-3px);box-shadow:var(--shadow)}.feature-icon{width:39px;height:39px;border-radius:13px;background:#ffffffc4;display:grid;place-items:center;font-size:19px;margin-bottom:14px}.feature-card strong{font-size:13px;letter-spacing:-.3px}.feature-card small{display:block;color:#656b61;line-height:1.5;font-size:10px;margin-top:5px}.feature-arrow{position:absolute;right:14px;top:14px;font-size:17px}.hero-banner{grid-column:span 7;background:var(--green);min-height:235px;position:relative}.hero-banner:after{content:"";position:absolute;width:180px;height:180px;border:1px solid #20241f20;border-radius:50%;right:-50px;bottom:-92px;box-shadow:0 0 0 18px #ffffff12,0 0 0 36px #ffffff0c}.hero-banner h2{font-size:clamp(27px,4vw,42px);max-width:450px;letter-spacing:-2px}.hero-banner p{max-width:430px;color:#41483a}.streak-card{grid-column:span 5;background:var(--ink);color:white;min-height:235px}.streak-card h2{color:white}.streak-card p{color:#c2c6bb}.flame{font-size:28px;display:inline-block;animation:flicker 2s ease-in-out infinite alternate}@keyframes flicker{from{transform:rotate(-4deg) scale(1)}to{transform:rotate(5deg) scale(1.07)}}.streak-number{font-size:55px;letter-spacing:-4px;font-weight:800;line-height:1;margin:12px 0}.streak-days{display:flex;gap:6px;margin-top:17px}.streak-dot{width:18px;height:18px;border-radius:6px;background:#ffffff20;border:1px solid #ffffff17}.streak-dot.done{background:var(--green);border-color:var(--green)}.section-heading{display:flex;align-items:end;justify-content:space-between;gap:14px;margin:12px 0 20px}.section-heading h1{margin:8px 0 4px}.section-heading p{font-size:12px;color:var(--muted);line-height:1.6;margin:0}.panel{background:white;border:1px solid #20241f0b;border-radius:22px;padding:20px;margin-bottom:14px}.panel-head{display:flex;align-items:start;justify-content:space-between;gap:12px;margin-bottom:15px}.panel-head h3{font-size:16px;margin:0 0 5px}.panel-head p{font-size:11px;color:var(--muted);margin:0;line-height:1.6}.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}.field{display:grid;gap:6px;min-width:0}.field.full{grid-column:1/-1}.field label{font:9px "DM Mono",monospace;letter-spacing:1px;color:#70766b;text-transform:uppercase}.field input,.field select,.field textarea,.inline-input{width:100%;border:1px solid var(--line);background:#fafaf6;border-radius:12px;padding:12px;color:var(--ink);min-width:0;font-size:12px}.field textarea{min-height:80px;resize:vertical}.field .hint{font-size:10px;color:var(--muted);line-height:1.5}.form-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.empty{border:1px dashed #cfd2c5;background:#ffffff7a;border-radius:17px;padding:22px;text-align:center;color:#767b70;font-size:12px;line-height:1.7}.empty strong{display:block;color:var(--ink);font-size:13px;margin-bottom:4px}.subject-list{display:grid;gap:11px}.subject-card{border:1px solid #20241f0d;background:#fff;border-radius:18px;padding:16px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}.subject-name{font-weight:800;font-size:14px;letter-spacing:-.4px;overflow-wrap:anywhere}.subject-meta{font-size:10px;color:var(--muted);margin-top:4px}.subject-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.tag{font-size:8px;padding:6px 8px;border-radius:99px;background:#f1f2ec;color:#656b60}.tag.done{background:#e1f5d3;color:#3d6d31}.subject-progress{display:flex;align-items:center;gap:12px}.ring{width:58px;height:58px;position:relative;flex-shrink:0}.ring svg{width:100%;height:100%;transform:rotate(-90deg)}.ring circle{fill:none;stroke-width:9}.ring .track{stroke:#e9ece3}.ring .value{stroke:#8ca94d;stroke-linecap:round;stroke-dasharray:163.36;stroke-dashoffset:163.36;transition:stroke-dashoffset .4s}.ring-text{position:absolute;inset:0;display:grid;place-items:center;font-size:12px;font-weight:800}.subject-actions{display:flex;flex-wrap:wrap;gap:6px;grid-column:1/-1;padding-top:10px;border-top:1px solid #f0f0e9}.routine-list,.log-list,.exam-list,.task-list,.topic-list,.question-list{display:grid;gap:8px}.routine-row,.log-row,.exam-row,.task-row,.topic-row,.question-row{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid #eceee6;border-radius:14px;background:#fff}.routine-day{width:44px;flex-shrink:0;border-radius:11px;background:var(--blue);padding:8px 5px;text-align:center;font:9px "DM Mono",monospace}.routine-day strong{display:block;font:800 15px Manrope;margin-top:3px}.row-main{flex:1;min-width:0}.row-main strong{display:block;font-size:11px;overflow-wrap:anywhere}.row-main small{display:block;font-size:10px;color:var(--muted);margin-top:4px;line-height:1.5}.row-actions{display:flex;gap:5px;flex-wrap:wrap;justify-content:flex-end}.row-check{width:25px;height:25px;border-radius:8px;border:1px solid #cdd2c1;background:white;display:grid;place-items:center;flex-shrink:0}.row-check.checked{background:var(--green);border-color:var(--green)}.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}.progress-track{height:8px;background:#ecede5;border-radius:99px;overflow:hidden}.progress-track span{display:block;height:100%;background:#87a553;border-radius:99px;transition:width .4s}.topic-status{border:0;border-radius:99px;background:#f0f1e9;font-size:9px;padding:7px 9px;font-weight:800;white-space:nowrap}.topic-status.done{background:#e1f5d3;color:#416d34}.topic-status.learning{background:var(--orange)}.exam-days{font-size:27px;font-weight:800;letter-spacing:-1.3px;white-space:nowrap}.exam-days small{font-size:9px;display:block;letter-spacing:.7px;color:var(--muted);text-transform:uppercase}.exam-row{align-items:stretch}.exam-date{min-width:54px;border-radius:11px;background:var(--pink);padding:8px;text-align:center;font:9px "DM Mono",monospace;align-self:center}.exam-date strong{display:block;font:800 20px Manrope}.exam-progress{margin-top:8px}.streak-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}.streak-cell{aspect-ratio:1;min-height:24px;border-radius:9px;background:#ebede4;display:grid;place-items:center;font-size:9px;color:#8a8e83;position:relative}.streak-cell.done{background:var(--green);color:#20241f}.streak-cell.today{outline:2px solid var(--ink);outline-offset:2px}.streak-legend{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:10px;color:var(--muted);margin-top:12px}.legend-dot{display:inline-block;width:8px;height:8px;border-radius:3px;background:var(--green);margin-right:5px}.quiz-box{border-radius:20px;background:var(--purple);padding:20px}.quiz-count{font:10px "DM Mono",monospace;color:#666078;text-transform:uppercase;letter-spacing:1px}.quiz-question{font-size:20px;font-weight:800;letter-spacing:-.7px;line-height:1.35;margin:13px 0 17px}.quiz-options{display:grid;gap:8px}.quiz-option{border:1px solid #8980a144;background:#ffffff9c;padding:12px;border-radius:12px;text-align:left;font-size:12px;font-weight:700}.quiz-option:hover{background:white}.quiz-option.correct{background:#dcf5cc;border-color:#6e9c50}.quiz-option.wrong{background:#ffe0e1;border-color:#cf777a}.quiz-feedback{min-height:25px;font-size:11px;font-weight:800;margin-top:12px}.date-chip{display:inline-flex;padding:8px 10px;border-radius:99px;background:#fff
+9;font:10px "DM Mono",monospace}.toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:var(--ink);color:white;border-radius:13px;padding:12px 16px;font-size:11px;box-shadow:0 12px 35px #0002;opacity:0;pointer-events:none;transition:all .25s;z-index:100;max-width:90%;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}.modal-backdrop{position:fixed;inset:0;background:#20241f77;display:none;align-items:center;justify-content:center;padding:16px;z-index:90}.modal-backdrop.open{display:flex}.modal{width:min(520px,100%);max-height:85vh;overflow:auto;background:var(--bg);border-radius:24px;padding:22px;box-shadow:0 20px 70px #0003}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.modal-head h3{margin:0;font-size:19px}.close-btn{border:0;background:#e8e9e1;border-radius:10px;width:34px;height:34px;font-size:18px}.bottom-nav{display:none}.footer{padding:20px 0 35px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:10px}.footer strong{color:var(--ink)}.hidden{display:none!important}
+@media(max-width:850px){.layout{grid-template-columns:1fr;gap:8px}.sidebar{position:static;padding:0;overflow-x:auto}.nav-title,.sidebar-note{display:none}.nav-list{display:flex;gap:7px;padding:5px 0 10px;width:max-content}.nav-btn{width:auto;padding:8px 10px;font-size:10px;white-space:nowrap}.nav-icon{width:25px;height:25px}.feature-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-banner{grid-column:span 7}.streak-card{grid-column:span 5}}
+@media(max-width:600px){.wrap{width:92%}.topbar{height:65px}.brand{font-size:19px}.brandmark{width:34px;height:34px}.today-pill{font-size:9px;padding:8px}.layout{padding-top:12px}.welcome{align-items:start}.date-stamp{min-width:95px}.date-stamp strong{font-size:11px}.date-stamp span{font-size:8px}.welcome p{font-size:11px}.grid{gap:10px}.card{padding:17px;border-radius:20px}.span-8,.span-7,.span-6,.span-5,.span-4,.span-3{grid-column:span 12}.hero-banner,.streak-card{grid-column:span 12;min-height:190px}.hero-banner h2{font-size:32px}.feature-grid{gap:9px}.feature-card{min-height:140px;padding:14px}.section-heading{align-items:start}.section-heading h1{font-size:34px}.panel{padding:15px;border-radius:18px}.form-grid,.split{grid-template-columns:1fr}.subject-card{padding:13px}.subject-progress{gap:7px}.ring{width:49px;height:49px}.footer{font-size:9px}.bottom-nav{display:none}.streak-grid{gap:5px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
 <div class="wrap">
 <header class="topbar">
-  <a class="brand" href="./" aria-label="Bellkit home">
+  <a class="brand" href="#" onclick="showView('home');return false">
     <span class="brandmark">b.</span>
-    <span>bellkit<small>STUDENT TOOLKIT</small></span>
+    <span>bellkit<small>YOUR SEMESTER, SIMPLIFIED</small></span>
   </a>
-  <span class="pill"><span class="dot"></span> YOUR SEMESTER, SIMPLIFIED</span>
+  <div class="topright">
+    <div class="today-pill"><span class="status-dot"></span><span id="todayLabel">YOUR STUDY SPACE</span></div>
+    <button class="icon-btn" type="button" onclick="showView('settings')" aria-label="Settings">⚙</button>
+  </div>
 </header>
-
-<section class="hero reveal">
-  <div class="eyebrow">A little more clarity, every day ↗</div>
-  <h1>College life.<br><em>Under control.</em></h1>
-  <div class="hero-row">
-    <p>Small, thoughtful tools that make student life easier. Start with your attendance, see where you stand, and plan your next move.</p>
-    <div class="hero-note">BUILT FOR STUDENTS<br>DESIGNED TO FEEL SIMPLE</div>
+<div class="layout">
+<aside class="sidebar">
+  <div class="nav-title">YOUR WORKSPACE</div>
+  <nav class="nav-list" aria-label="Main navigation">
+    <button class="nav-btn active" data-view="home" onclick="showView('home')"><span class="nav-icon">⌂</span>Overview</button>
+    <button class="nav-btn" data-view="attendance" onclick="showView('attendance')"><span class="nav-icon">◷</span>Attendance</button>
+    <button class="nav-btn" data-view="subjects" onclick="showView('subjects')"><span class="nav-icon">▤</span>Subjects</button>
+    <button class="nav-btn" data-view="study" onclick="showView('study')"><span class="nav-icon">✎</span>Self-study</button>
+    <button class="nav-btn" data-view="exams" onclick="showView('exams')"><span class="nav-icon">◷</span>Exams</button>
+    <button class="nav-btn" data-view="streaks" onclick="showView('streaks')"><span class="nav-icon">♨</span>Streaks</button>
+    <button class="nav-btn" data-view="settings" onclick="showView('settings')"><span class="nav-icon">⚙</span>Settings</button>
+  </nav>
+  <div class="sidebar-note"><b>Small steps count.</b>Your dashboard is here to help you make progress, not pressure you to be perfect.</div>
+</aside>
+<main class="main">
+<section class="view active" id="view-home">
+  <div class="welcome">
+    <div><div class="eyebrow">YOUR PERSONAL STUDENT SPACE</div><h1>Make this semester<br><em>count.</em></h1><p>A little structure. A little progress. A lot more clarity.</p></div>
+    <div class="date-stamp"><strong id="homeDate">Today</strong><span id="homeDay">YOUR DAY</span></div>
+  </div>
+  <div class="grid">
+    <article class="card hero-banner">
+      <div class="section-label"><span>WELCOME TO BELLKIT</span><span class="num">01</span></div>
+      <h2>Your semester.<br>Your pace. Your progress.</h2>
+      <p>Keep track of classes, topics, study sessions and exams — all in one calm space.</p>
+      <div class="actions"><button class="btn" onclick="showView('attendance')">Open my dashboard ↗</button></div>
+    </article>
+    <article class="card streak-card">
+      <div class="section-label"><span>YOUR CONSISTENCY</span><span class="num">DAILY</span></div>
+      <h2><span class="flame">♨</span> Study streak</h2>
+      <div class="streak-number" id="homeStreak">0</div>
+      <p>days of showing up for yourself</p>
+      <div class="streak-days" id="homeStreakDays"></div>
+      <div class="actions"><button class="btn light" onclick="markStudyDay()">Mark today as studied ✓</button></div>
+    </article>
+    <article class="card span-12">
+      <div class="section-label"><span>YOUR QUICK OVERVIEW</span><span class="num">AT A GLANCE</span></div>
+      <div class="grid">
+        <div class="span-3"><div class="big-num" id="overviewAttendance">—</div><div class="metric-caption">Overall attendance</div><div class="metric-bar"><span id="overviewAttendanceBar"></span></div></div>
+        <div class="span-3"><div class="big-num" id="overviewSubjects">0</div><div class="metric-caption">Subjects added</div><div class="metric-bar"><span id="overviewSubjectsBar"></span></div></div>
+        <div class="span-3"><div class="big-num" id="overviewTopics">0%</div><div class="metric-caption">Topics completed</div><div class="metric-bar"><span id="overviewTopicsBar"></span></div></div>
+        <div class="span-3"><div class="big-num" id="overviewStudy">0h</div><div class="metric-caption">Study time this week</div><div class="metric-bar"><span id="overviewStudyBar"></span></div></div>
+      </div>
+    </article>
+    <div class="span-12"><div class="section-label"><span>JUMP BACK IN</span><span class="num">YOUR TOOLS</span></div></div>
+    <div class="feature-grid span-12">
+      <button class="feature-card c-blue" onclick="showView('attendance')"><span class="feature-arrow">↗</span><span class="feature-icon">◷</span><strong>Attendance HQ</strong><small>Subjects, weekly routine and extra classes</small></button>
+      <button class="feature-card c-purple" onclick="showView('subjects')"><span class="feature-arrow">↗</span><span class="feature-icon">▤</span><strong>Subject progress</strong><small>Topics covered and syllabus progress</small></button>
+      <button class="feature-card c-pink" onclick="showView('study')"><span class="feature-arrow">↗</span><span class="feature-icon">✎</span><strong>Self-study studio</strong><small>Build a routine and practise questions</small></button>
+      <button class="feature-card c-orange" onclick="showView('exams')"><span class="feature-arrow">↗</span><span class="feature-icon">◷</span><strong>Exam countdown</strong><small>Time left and preparation progress</small></button>
+      <button class="feature-card c-green" onclick="showView('streaks')"><span class="feature-arrow">↗</span><span class="feature-icon">♨</span><strong>Daily streaks</strong><small>Celebrate your consistency</small></button>
+      <button class="feature-card c-mint" onclick="showView('settings')"><span class="feature-arrow">↗</span><span class="feature-icon">⚙</span><strong>Your settings</strong><small>Personalise and manage your data</small></button>
+    </div>
   </div>
 </section>
-
-<main class="grid">
-<section class="card attendance reveal" id="attendance">
-  <div class="section-label"><span>01 / Attendance planner</span><span class="mini-icon">↗</span></div>
-  <h2>Know your numbers.<br>Stay on track.</h2>
-  <p class="sub">Enter your classes so far. We'll calculate your current attendance and what it takes to reach your target.</p>
-  <div class="fields">
-    <div class="field"><label for="held">CLASSES HELD</label><input id="held" type="number" min="0" step="1" inputmode="numeric" placeholder="e.g. 42" value="42"></div>
-    <div class="field"><label for="attended">CLASSES ATTENDED</label><input id="attended" type="number" min="0" step="1" inputmode="numeric" placeholder="e.g. 35" value="35"></div>
-    <div class="field"><label for="target">TARGET ATTENDANCE (%)</label><input id="target" type="number" min="1" max="100" step="1" inputmode="numeric" value="75"></div>
-    <div class="field"><label for="planned">UPCOMING CLASSES (OPTIONAL)</label><input id="planned" type="number" min="0" step="1" inputmode="numeric" value="10"></div>
-  </div>
-  <button class="action" id="calculate" type="button">Calculate my attendance ↗</button>
-  <div class="result-row" aria-live="polite">
-    <div class="ring">
-      <svg viewBox="0 0 100 100" role="img" aria-label="Attendance percentage">
-        <circle class="track" cx="50" cy="50" r="40"/>
-        <circle class="value" id="ringValue" cx="50" cy="50" r="40"/>
-      </svg>
-      <div class="ring-text" id="percent">83.3%</div>
-    </div>
+  <section class="view" id="view-attendance">
+  <div class="section-heading">
     <div>
-      <div class="result-title" id="resultTitle">You're on track ✦</div>
-      <div class="result-copy" id="resultCopy">Your current attendance is above your 75% target.</div>
+      <div class="eyebrow">01 / ATTENDANCE HQ</div>
+      <h1>Know your numbers.</h1>
+      <p>Track every subject separately. Build your weekly college routine and record extra classes whenever they happen.</p>
+    </div>
+    <button class="btn" onclick="openSubjectForm()">＋ Add subject</button>
+  </div>
+
+  <div class="grid">
+    <article class="card span-4 c-green">
+      <div class="section-label">OVERALL ATTENDANCE</div>
+      <div class="big-num" id="overallAttendance">0%</div>
+      <p>Your combined attendance across all subjects.</p>
+    </article>
+    <article class="card span-4 c-blue">
+      <div class="section-label">CLASSES ATTENDED</div>
+      <div class="big-num" id="totalAttended">0</div>
+      <p>Total classes attended.</p>
+    </article>
+    <article class="card span-4 c-orange">
+      <div class="section-label">SUBJECTS TO WATCH</div>
+      <div class="big-num" id="lowSubjects">0</div>
+      <p>Subjects currently below their attendance target.</p>
+    </article>
+
+    <div class="span-6">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Add a subject</h3>
+            <p>Set its name and minimum attendance target.</p>
+          </div>
+        </div>
+        <form id="subjectForm">
+          <div class="form-grid">
+            <div class="field full">
+              <label for="subjectName">Subject name</label>
+              <input id="subjectName" maxlength="60" placeholder="e.g. Mathematics" required>
+            </div>
+            <div class="field">
+              <label for="subjectTarget">Attendance target (%)</label>
+              <input id="subjectTarget" type="number" min="1" max="100" value="75" required>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn" type="submit">Save subject ↗</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Mark attendance</h3>
+            <p>Record regular and optional extra classes.</p>
+          </div>
+        </div>
+        <form id="attendanceForm">
+          <div class="form-grid">
+            <div class="field full">
+              <label for="attendanceSubject">Subject</label>
+              <select id="attendanceSubject" required></select>
+            </div>
+            <div class="field">
+              <label for="attendanceDate">Date</label>
+              <input id="attendanceDate" type="date" required>
+            </div>
+            <div class="field">
+              <label for="attendanceStatus">Attendance</label>
+              <select id="attendanceStatus">
+                <option value="present">Present</option>
+                <option value="absent">Absent</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label style="display:flex;align-items:center;gap:9px;text-transform:none">
+                <input type="checkbox" id="extraClass" style="width:18px;height:18px">
+                This was an extra class
+              </label>
+              <span class="hint">Extra classes count only when you record them. They are separate from your weekly routine.</span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn" type="submit">Save attendance</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="span-6">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Your subjects</h3>
+            <p>Open each subject to see its attendance details.</p>
+          </div>
+        </div>
+        <div id="subjectAttendanceList" class="subject-list">
+          <div class="empty">
+            <strong>Your subjects will appear here.</strong>
+            Add your first subject to get started.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="span-12">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <h3>Weekly college routine</h3>
+            <p>Add your regular class timings.</p>
+          </div>
+        </div>
+        <form id="weeklyRoutineForm">
+          <div class="form-grid">
+            <div class="field">
+              <label for="routineSubject">Subject</label>
+              <select id="routineSubject" required></select>
+            </div>
+            <div class="field">
+              <label for="routineDay">Day</label>
+              <select id="routineDay">
+                <option>Monday</option>
+                <option>Tuesday</option>
+                <option>Wednesday</option>
+                <option>Thursday</option>
+                <option>Friday</option>
+                <option>Saturday</option>
+                <option>Sunday</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="routineTime">Class time</label>
+              <input type="time" id="routineTime" required>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn" type="submit">Add to routine</button>
+          </div>
+        </form>
+        <div id="weeklyRoutineList" class="routine-list"></div>
+      </div>
     </div>
   </div>
-</section>
+            </section>
+            <section class="view" id="view-subjects">
+  <div class="page-heading">
+    <div>
+      <div class="eyebrow">ACADEMIC TRACKER</div>
+      <h1>Subject progress</h1>
+      <p>Track what you've completed and what still needs attention.</p>
+    </div>
+  </div>
 
-<section class="card visual reveal" id="playground">
-  <div class="section-label"><span>02 / Your semester</span><span class="mini-icon">✳</span></div>
-  <h3>A little progress<br>goes a long way.</h3>
-  <p>Move your finger across this card. The orbit follows your touch.</p>
-  <div class="orbit-area" id="orbitArea" aria-label="Interactive orbit illustration">
-    <span class="orbit one"></span><span class="orbit two"></span>
-    <span class="orbit three"></span><span class="orbit-dot"></span>
-    <span class="spark">✳</span>
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <div class="eyebrow">YOUR SYLLABUS</div>
+        <h2>Topics covered</h2>
+      </div>
+      <span class="pill">Live progress</span>
+    </div>
+
+    <form id="topicForm" class="form-grid">
+      <label>
+        Subject
+        <select id="topicSubject" required>
+          <option value="">Choose subject</option>
+        </select>
+      </label>
+
+      <label>
+        Topic name
+        <input id="topicName" type="text" placeholder="e.g. Introduction to HTML" required>
+      </label>
+
+      <label>
+        Topic status
+        <select id="topicStatus">
+          <option value="0">Not started</option>
+          <option value="50">In progress</option>
+          <option value="100">Completed</option>
+        </select>
+      </label>
+
+      <button class="btn" type="submit">＋ Add topic</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <div class="eyebrow">PROGRESS OVERVIEW</div>
+        <h2>Subject breakdown</h2>
+      </div>
+    </div>
+    <div id="subjectProgressList" class="subject-list">
+      <div class="empty-state">Your subject progress will appear here after you add topics.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">RECENT ACTIVITY</div>
+    <h2>Topics you've added</h2>
+    <div id="topicList" class="topic-list">
+      <div class="empty-state">No topics added yet.</div>
+    </div>
+  </div>
+            </section>
+            <section class="view" id="view-study">
+  <div class="page-heading">
+    <div>
+      <div class="eyebrow">BEYOND THE CLASSROOM</div>
+      <h1>Self-study studio</h1>
+      <p>Plan your own learning, one focused session at a time.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="eyebrow">STUDY TASKS</div>
+      <div class="stat-number" id="studyTaskCount">0</div>
+      <div class="stat-label">Tasks added</div>
+    </div>
+    <div class="stat-card">
+      <div class="eyebrow">COMPLETED</div>
+      <div class="stat-number" id="studyCompletedCount">0</div>
+      <div class="stat-label">Tasks finished</div>
+    </div>
+    <div class="stat-card">
+      <div class="eyebrow">STUDY TIME</div>
+      <div class="stat-number" id="studyMinutes">0</div>
+      <div class="stat-label">Minutes logged</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">YOUR STUDY PLAN</div>
+    <h2>Add a study task</h2>
+
+    <form id="studyForm" class="form-grid">
+      <label>
+        What will you study?
+        <input id="studyTaskName" type="text" placeholder="e.g. Revise computer fundamentals" required>
+      </label>
+
+      <label>
+        Subject
+        <select id="studySubject">
+          <option value="">General study</option>
+        </select>
+      </label>
+
+      <label>
+        Planned duration (minutes)
+        <input id="studyDuration" type="number" min="5" max="600" value="30" required>
+      </label>
+
+      <label>
+        Study date
+        <input id="studyDate" type="date" required>
+      </label>
+
+      <button class="btn" type="submit">＋ Add study task</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <div class="eyebrow">DAILY CHECKLIST</div>
+        <h2>Your study tasks</h2>
+      </div>
+    </div>
+    <div id="studyTaskList" class="task-list">
+      <div class="empty-state">Your study tasks will appear here.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">PRACTICE ZONE</div>
+    <h2>Test your understanding</h2>
+    <p class="muted">Add your own questions and answers to practise what you've learned.</p>
+
+    <form id="practiceForm" class="form-grid">
+      <label>
+        Question
+        <textarea id="practiceQuestion" rows="2" placeholder="Write your practice question..." required></textarea>
+      </label>
+
+      <label>
+        Correct answer
+        <textarea id="practiceAnswer" rows="2" placeholder="Write the answer..." required></textarea>
+      </label>
+
+      <button class="btn" type="submit">＋ Save question</button>
+    </form>
+
+    <div id="practiceList" class="topic-list">
+      <div class="empty-state">Your practice questions will appear here.</div>
+    </div>
+  </div>
+            </section>
+            <section class="view" id="view-exams">
+  <div class="page-heading">
+    <div>
+      <div class="eyebrow">STAY PREPARED</div>
+      <h1>Exam centre</h1>
+      <p>Keep important dates visible and track your preparation.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">EXAM PLANNER</div>
+    <h2>Add an upcoming exam</h2>
+
+    <form id="examForm" class="form-grid">
+      <label>
+        Exam name
+        <input id="examName" type="text" placeholder="e.g. Computer Fundamentals" required>
+      </label>
+
+      <label>
+        Subject
+        <select id="examSubject">
+          <option value="">General exam</option>
+        </select>
+      </label>
+
+      <label>
+        Exam date
+        <input id="examDate" type="date" required>
+      </label>
+
+      <label>
+        Preparation completed
+        <select id="examProgress">
+          <option value="0">Not started</option>
+          <option value="25">25% prepared</option>
+          <option value="50">50% prepared</option>
+          <option value="75">75% prepared</option>
+          <option value="100">Fully prepared</option>
+        </select>
+      </label>
+
+      <button class="btn" type="submit">＋ Add exam</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <div>
+        <div class="eyebrow">YOUR CALENDAR</div>
+        <h2>Upcoming exams</h2>
+      </div>
+      <span class="pill">Countdown</span>
+    </div>
+
+    <div id="examList" class="exam-list">
+      <div class="empty-state">No exams added yet. Add your first exam above.</div>
+    </div>
+  </div>
+  </section>
+  <section class="view" id="view-streaks">
+  <div class="page-heading">
+    <div>
+      <div class="eyebrow">CONSISTENCY COUNTS</div>
+      <h1>Your study streak</h1>
+      <p>Small, consistent efforts add up.</p>
+    </div>
+  </div>
+
+  <div class="card streak-feature">
+    <div class="eyebrow">CURRENT STREAK</div>
+    <div class="streak-number"><span id="streakCount">0</span> days</div>
+    <p id="streakMessage">Complete a study task to start your streak.</p>
+    <button class="btn" type="button" onclick="markStudyToday()">✓ Mark today as studied</button>
+  </div>
+
+  <div class="card">
+    <div class="eyebrow">YOUR CONSISTENCY</div>
+    <h2>Recent activity</h2>
+    <div id="streakCalendar" class="streak-calendar"></div>
   </div>
 </section>
 
-<section class="card stat reveal">
-  <div class="section-label"><span>Quick insight</span><span class="mini-icon">◎</span></div>
-  <h3 id="statNumber">83.3%</h3>
-  <p>Your current attendance rate.</p>
-  <div class="change" id="statChange">↗ Calculated live</div>
-</section>
+<section class="view" id="view-settings">
+  <div class="page-heading">
+    <div>
+      <div class="eyebrow">PERSONALISE YOUR SPACE</div>
+      <h1>Settings</h1>
+      <p>Manage your Bellkit dashboard.</p>
+    </div>
+  </div>
 
-<section class="card tip reveal">
-  <span class="scribble">✳</span>
-  <div class="section-label"><span>Little reminder</span><span>03</span></div>
-  <h3>Consistency beats<br>last-minute stress.</h3>
-  <p>Small steps today make tomorrow easier.</p>
-</section>
+  <div class="card">
+    <div class="eyebrow">YOUR PROFILE</div>
+    <h2>Student details</h2>
+    <form id="profileForm" class="form-grid">
+      <label>
+        Your name
+        <input id="profileName" type="text" placeholder="Enter your name">
+      </label>
+      <label>
+        College / University
+        <input id="profileCollege" type="text" placeholder="Enter college name">
+      </label>
+      <button class="btn" type="submit">Save profile</button>
+    </form>
+  </div>
 
-<section class="card schedule reveal">
-  <div class="section-label"><span>Semester rhythm</span><span class="mini-icon">⌁</span></div>
-  <h3>One class at a time.</h3>
-  <p>A small visual reminder that progress builds over time.</p>
-  <div class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-</section>
-
-<section class="card chart-card reveal">
-  <div class="section-label"><span>04 / Attendance visual</span><span class="mini-icon">⌁</span></div>
-  <h3>Your numbers, at a glance.</h3>
-  <p>This illustration reacts when you recalculate your attendance.</p>
-  <div class="chart-wrap">
-    <svg viewBox="0 0 500 120" preserveAspectRatio="none" role="img" aria-label="Decorative animated attendance graph">
-      <defs><linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a999ff"/><stop offset="1" stop-color="#a999ff" stop-opacity="0"/></linearGradient></defs>
-      <path class="chart-fill" d="M0 95 C55 80 65 35 120 56 S205 110 260 60 S350 15 400 50 S465 45 500 18 V120 H0 Z"/>
-      <path class="chart-line" id="chartLine" d="M0 95 C55 80 65 35 120 56 S205 110 260 60 S350 15 400 50 S465 45 500 18"/>
-      <circle class="chart-point" id="chartPoint" cx="260" cy="60" r="5"/>
-    </svg>
+  <div class="card">
+    <div class="eyebrow">DATA MANAGEMENT</div>
+    <h2>Your dashboard data</h2>
+    <p class="muted">Your Bellkit information is stored in this browser on this device.</p>
+    <button class="btn btn-secondary" type="button" onclick="exportData()">Download backup</button>
+    <button class="btn btn-danger" type="button" onclick="resetBellkit()">Reset all dashboard data</button>
   </div>
 </section>
-
-<section class="card goal-card reveal">
-  <div class="section-label"><span>05 / Your target</span><span class="mini-icon">↗</span></div>
-  <h3>Keep your goal in sight.</h3>
-  <p>Your current percentage compared with your chosen target.</p>
-  <div class="goal-number" id="goalNumber">75%</div>
-  <div class="goal-bar"><span id="goalBar"></span></div>
-  <div class="goal-bottom"><span>CURRENT VS TARGET</span><span id="goalLabel">83.3 / 75</span></div>
-</section>
-</main>
-
-<footer class="footer">
-  <span>© 2026 BELLKIT · MADE FOR STUDENT LIFE</span>
-  <a href="#attendance">BACK TO ATTENDANCE ↑</a>
-</footer>
-</div>
-
-<!-- PART 2 GOES BELOW THIS LINE -->
-</body>
-                     </html>
-  
-<script>
+  <script>
 const $ = id => document.getElementById(id);
 
-function calculateAttendance() {
-  const held = Number($("held").value);
-  const attended = Number($("attended").value);
-  const target = Number($("target").value);
-  const planned = Number($("planned").value || 0);
+const defaultData = {
+  profile: { name: "Student", college: "" },
+  subjects: [],
+  attendance: [],
+  routines: [],
+  topics: [],
+  studyTasks: [],
+  practice: [],
+  exams: [],
+  studyDays: []
+};
 
-  const invalid =
-    $("held").value.trim() === "" ||
-    $("attended").value.trim() === "" ||
-    held < 0 || attended < 0 || held === 0 ||
-    attended > held ||
-    !Number.isInteger(held) ||
-    !Number.isInteger(attended) ||
-    !Number.isInteger(planned) || planned < 0 ||
-    !Number.isFinite(target) || target <= 0 || target > 100;
+let data;
 
-  if (invalid) {
-    $("resultTitle").textContent = "Check your numbers";
-    $("resultCopy").textContent =
-      "Classes held must be above zero; attended classes cannot exceed classes held. Target must be 1–100%.";
-    return;
-  }
+try {
+  data = JSON.parse(localStorage.getItem("bellkitData")) || structuredClone(defaultData);
+} catch {
+  data = JSON.parse(JSON.stringify(defaultData));
+}
 
-  const percent = attended / held * 100;
-  const needed = Math.max(0, Math.ceil((target * held / 100 - attended) / (1 - target / 100)));
-  const canReach = target < 100;
-  const safe = percent >= target;
-  const projected = (attended + planned) / (held + planned) * 100;
+function saveData() {
+  localStorage.setItem("bellkitData", JSON.stringify(data));
+  renderAll();
+}
 
-  $("percent").textContent = percent.toFixed(1) + "%";
-  $("statNumber").textContent = percent.toFixed(1) + "%";
-  $("statChange").textContent = safe ? "↗ Above your target" : "↗ Below your target";
-  $("resultTitle").textContent = safe ? "You're on track ✦" : "Let's make a plan ↗";
+function showView(name) {
+  document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+  const target = $("view-" + name);
+  if (target) target.classList.add("active");
 
-  if (safe) {
-    $("resultCopy").textContent =
-      "You're " + (percent - target).toFixed(1) +
-      " percentage points above your target. Keep going!";
-  } else if (target === 100) {
-    $("resultCopy").textContent =
-      "A 100% target requires attending every future class. Your current rate is " + percent.toFixed(1) + "%.";
-  } else {
-    $("resultCopy").textContent =
-      "Attend the next " + needed + " classes in a row to reach " + target + "%.";
-  }
+  document.querySelectorAll(".nav-btn").forEach(b => {
+    b.classList.toggle("active", b.getAttribute("onclick")?.includes("'" + name + "'"));
+  });
 
-  const ringOffset = 251.2 * (1 - percent / 100);
-  $("ringValue").style.strokeDashoffset = ringOffset;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
 
-  $("goalNumber").textContent = target + "%";
-  $("goalLabel").textContent = percent.toFixed(1) + " / " + target;
-  $("goalBar").style.width = Math.min(100, percent) + "%";
+function today() {
+  const d = new Date();
+  return d.getFullYear() + "-" +
+    String(d.getMonth() + 1).padStart(2, "0") + "-" +
+    String(d.getDate()).padStart(2, "0");
+}
 
-  const pointX = 35 + percent * 4.3;
-  const pointY = 100 - percent * 0.75;
-  $("chartPoint").setAttribute("cx", Math.min(465, pointX));
-  $("chartPoint").setAttribute("cy", Math.max(18, pointY));
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#39;"
+  })[c]);
+}
 
-  if (planned > 0) {
-    $("chartLine").style.stroke = projected >= target ? "#718d45" : "#8a78ed";
-  } else {
-    $("chartLine").style.stroke = "#8a78ed";
+function openSubjectForm() {
+  const form = $("subjectForm");
+  if (form) {
+    form.classList.toggle("hidden");
+    form.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 }
 
-$("calculate").addEventListener("click", calculateAttendance);
+function fillSubjectOptions() {
+  const ids = ["attendanceSubject", "routineSubject", "topicSubject", "studySubject", "examSubject"];
 
-["held", "attended", "target", "planned"].forEach(id => {
-  $(id).addEventListener("keydown", event => {
-    if (event.key === "Enter") calculateAttendance();
+  ids.forEach(id => {
+    const select = $(id);
+    if (!select) return;
+
+    const first = select.options[0]?.outerHTML || '<option value="">Choose subject</option>';
+    select.innerHTML = first + data.subjects.map(s =>
+      `<option value="${s.id}">${escapeHTML(s.name)}</option>`
+    ).join("");
   });
+}
+
+function renderAttendance() {
+  const total = data.attendance.length;
+  const attended = data.attendance.filter(a => a.status === "present").length;
+  const percent = total ? Math.round(attended / total * 100) : 0;
+
+  if ($("overallAttendance")) $("overallAttendance").textContent = percent + "%";
+  if ($("totalAttended")) $("totalAttended").textContent = attended + " / " + total;
+
+  const low = data.subjects.filter(s => {
+    const records = data.attendance.filter(a => a.subjectId === s.id);
+    return records.length && records.filter(a => a.status === "present").length / records.length * 100 < s.target;
+  });
+
+  if ($("lowSubjects")) $("lowSubjects").textContent = low.length;
+
+  if ($("subjectAttendanceList")) {
+    $("subjectAttendanceList").innerHTML = data.subjects.length ? data.subjects.map(s => {
+      const records = data.attendance.filter(a => a.subjectId === s.id);
+      const count = records.filter(a => a.status === "present").length;
+      const pct = records.length ? Math.round(count / records.length * 100) : 0;
+      return `<div class="subject-row">
+        <div><strong>${escapeHTML(s.name)}</strong><small>${count} attended / ${records.length} classes · Target ${s.target}%</small></div>
+        <strong>${pct}%</strong>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join("") : '<div class="empty-state">Add your first subject to begin.</div>';
+  }
+
+  if ($("overviewAttendance")) $("overviewAttendance").textContent = percent + "%";
+  if ($("overviewAttendanceBar")) $("overviewAttendanceBar").style.width = percent + "%";
+}
+
+function renderRoutines() {
+  if (!$("weeklyRoutineList")) return;
+  $("weeklyRoutineList").innerHTML = data.routines.length ? data.routines.map(r =>
+    `<div class="routine-row"><strong>${escapeHTML(r.subject)}</strong><span>${escapeHTML(r.day)} · ${escapeHTML(r.time)}</span></div>`
+  ).join("") : '<div class="empty-state">Your weekly routine will appear here.</div>';
+}
+
+function renderTopics() {
+  const list = $("topicList");
+  if (list) {
+    list.innerHTML = data.topics.length ? data.topics.map(t =>
+      `<div class="topic-row">
+        <div><strong>${escapeHTML(t.name)}</strong><small>${escapeHTML(subjectName(t.subjectId))}</small></div>
+        <select onchange="updateTopic('${t.id}',this.value)">
+          <option value="0" ${t.status == 0 ? "selected" : ""}>Not started</option>
+          <option value="50" ${t.status == 50 ? "selected" : ""}>In progress</option>
+          <option value="100" ${t.status == 100 ? "selected" : ""}>Completed</option>
+        </select>
+        <button class="text-btn" onclick="deleteItem('topics','${t.id}')">Delete</button>
+      </div>`
+    ).join("") : '<div class="empty-state">No topics added yet.</div>';
+  }
+
+  if ($("subjectProgressList")) {
+    $("subjectProgressList").innerHTML = data.subjects.length ? data.subjects.map(s => {
+      const topics = data.topics.filter(t => t.subjectId === s.id);
+      const pct = topics.length ? Math.round(topics.reduce((n,t) => n + Number(t.status), 0) / topics.length) : 0;
+      return `<div class="subject-row">
+        <div><strong>${escapeHTML(s.name)}</strong><small>${topics.length} topics</small></div>
+        <strong>${pct}%</strong>
+        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+      </div>`;
+    }).join("") : '<div class="empty-state">Add subjects in Attendance first.</div>';
+  }
+
+  const all = data.topics.length;
+  const done = data.topics.filter(t => Number(t.status) === 100).length;
+  if ($("overviewTopics")) $("overviewTopics").textContent = done + " / " + all;
+  if ($("overviewTopicsBar")) $("overviewTopicsBar").style.width = (all ? done / all * 100 : 0) + "%";
+  if ($("overviewSubjects")) $("overviewSubjects").textContent = data.subjects.length;
+  if ($("overviewSubjectsBar")) $("overviewSubjectsBar").style.width = Math.min(data.subjects.length * 10, 100) + "%";
+}
+
+function subjectName(id) {
+  return data.subjects.find(s => s.id === id)?.name || "General";
+}
+
+function updateTopic(id, status) {
+  const topic = data.topics.find(t => t.id === id);
+  if (topic) {
+    topic.status = Number(status);
+    saveData();
+  }
+}
+
+function renderStudy() {
+  if ($("studyTaskCount")) $("studyTaskCount").textContent = data.studyTasks.length;
+  if ($("studyCompletedCount")) $("studyCompletedCount").textContent = data.studyTasks.filter(t => t.done).length;
+  if ($("studyMinutes")) $("studyMinutes").textContent = data.studyTasks.filter(t => t.done).reduce((n,t) => n + Number(t.duration), 0);
+
+  if ($("studyTaskList")) {
+    $("studyTaskList").innerHTML = data.studyTasks.length ? data.studyTasks.map(t =>
+      `<div class="task-row">
+        <label><input type="checkbox" ${t.done ? "checked" : ""} onchange="toggleTask('${t.id}')"> ${escapeHTML(t.name)}</label>
+        <small>${escapeHTML(subjectName(t.subjectId))} · ${t.duration} min · ${escapeHTML(t.date)}</small>
+        <button class="text-btn" onclick="deleteItem('studyTasks','${t.id}')">Delete</button>
+      </div>`
+    ).join("") : '<div class="empty-state">No study tasks yet.</div>';
+  }
+
+  if ($("overviewStudy")) $("overviewStudy").textContent = data.studyTasks.filter(t => t.done).length;
+  if ($("overviewStudyBar")) $("overviewStudyBar").style.width =
+    (data.studyTasks.length ? data.studyTasks.filter(t => t.done).length / data.studyTasks.length * 100 : 0) + "%";
+
+  if ($("practiceList")) {
+    $("practiceList").innerHTML = data.practice.length ? data.practice.map(p =>
+      `<details class="practice-item"><summary>${escapeHTML(p.question)}</summary><p>${escapeHTML(p.answer)}</p><button class="text-btn" onclick="deleteItem('practice','${p.id}')">Delete</button></details>`
+    ).join("") : '<div class="empty-state">No practice questions saved yet.</div>';
+  }
+}
+
+function toggleTask(id) {
+  const task = data.studyTasks.find(t => t.id === id);
+  if (task) {
+    task.done = !task.done;
+    saveData();
+  }
+}
+
+function renderExams() {
+  if (!$("examList")) return;
+  const exams = [...data.exams].sort((a,b) => a.date.localeCompare(b.date));
+  $("examList").innerHTML = exams.length ? exams.map(e => {
+    const days = Math.ceil((new Date(e.date + "T00:00:00") - new Date(today() + "T00:00:00")) / 86400000);
+    const countdown = days < 0 ? "Date passed" : days === 0 ? "Today" : days + " days left";
+    return `<div class="exam-row">
+      <div><strong>${escapeHTML(e.name)}</strong><small>${escapeHTML(subjectName(e.subjectId))} · ${escapeHTML(e.date)}</small></div>
+      <strong>${countdown}</strong>
+      <div class="progress-track"><div class="progress-fill" style="width:${e.progress}%"></div></div>
+      <small>${e.progress}% prepared</small>
+      <button class="text-btn" onclick="deleteItem('exams','${e.id}')">Delete</button>
+    </div>`;
+  }).join("") : '<div class="empty-state">No exams added yet.</div>';
+}
+
+function renderStreak() {
+  const days = [...new Set(data.studyDays)].sort();
+  let streak = 0;
+  let date = new Date(today() + "T00:00:00");
+
+  while (days.includes(date.toISOString().slice(0,10))) {
+    streak++;
+    date.setDate(date.getDate() - 1);
+  }
+
+  if (!days.includes(today())) {
+    date = new Date();
+    date.setDate(date.getDate() - 1);
+    while (days.includes(date.getFullYear() + "-" + String(date.getMonth()+1).padStart(2,"0") + "-" + String(date.getDate()).padStart(2,"0"))) {
+      streak++;
+      date.setDate(date.getDate() - 1);
+    }
+  }
+
+  if ($("streakCount")) $("streakCount").textContent = streak;
+  if ($("streakMessage")) $("streakMessage").textContent = streak ? "Keep your learning momentum going!" : "Complete a study task to start your streak.";
+
+  if ($("streakCalendar")) {
+    const recent = [];
+    for (let i = 13; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+      recent.push(`<div class="streak-day ${days.includes(key) ? "done" : ""}"><small>${d.toLocaleDateString("en",{weekday:"short"})}</small><strong>${d.getDate()}</strong></div>`);
+    }
+    $("streakCalendar").innerHTML = recent.join("");
+  }
+}
+
+function markStudyToday() {
+  if (!data.studyDays.includes(today())) data.studyDays.push(today());
+  saveData();
+}
+
+function deleteItem(collection, id) {
+  data[collection] = data[collection].filter(item => item.id !== id);
+  saveData();
+}
+
+function renderProfile() {
+  if ($("profileName")) $("profileName").value = data.profile.name || "";
+  if ($("profileCollege")) $("profileCollege").value = data.profile.college || "";
+  const greeting = $("welcomeName");
+  if (greeting) greeting.textContent = data.profile.name || "Student";
+}
+
+function renderAll() {
+  fillSubjectOptions();
+  renderAttendance();
+  renderRoutines();
+  renderTopics();
+  renderStudy();
+  renderExams();
+  renderStreak();
+  renderProfile();
+}
+
+function newId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+}
+
+$("subjectForm")?.addEventListener("submit", e => {
+  e.preventDefault();
+  const name = $("subjectName").value.trim();
+  const target = Number($("subjectTarget").value);
+  if (!name) return;
+  data.subjects.push({ id:newId(), name, target:target || 75 });
+  e.target.reset();
+  saveData();
 });
 
-const orbitArea = $("orbitArea");
-const orbitElements = orbitArea.querySelectorAll(".orbit, .orbit-dot, .spark");
-
-function moveOrbit(event) {
-  const rect = orbitArea.getBoundingClientRect();
-  const point = event.touches ? event.touches[0] : event;
-  const x = (point.clientX - rect.left) / rect.width - 0.5;
-  const y = (point.clientY - rect.top) / rect.height - 0.5;
-
-  orbitElements.forEach((element, index) => {
-    const strength = (index + 1) * 9;
-    element.style.translate = `${x * strength}px ${y * strength}px`;
+$("attendanceForm")?.addEventListener("submit", e => {
+  e.preventDefault();
+  data.attendance.push({
+    id:newId(),
+    subjectId:$("attendanceSubject").value,
+    date:$("attendanceDate").value || today(),
+    status:$("attendanceStatus").value,
+    extra:$("extraClass").checked
   });
+  e.target.reset();
+  saveData();
+});
+
+$("weeklyRoutineForm")?.addEventListener("submit", e => {
+  e.preventDefault();
+  data.routines.push({
+    id:newId(),
+    subject:$("routineSubject").selectedOptions[0]?.textContent || "Subject",
+    day:$("routineDay").value,
+    time:$("routineTime").value
+  });
+  e.target.reset();
+  saveData();
+});
+
+$("topicForm")?.addEventListener("submit", e => {
+  e.preventDefault();
+  data.topics.push({
+    id:newId(),
+    subjectId:$("topicSubject").value,
+    name:$("topicName").value.trim(),
+    status:Number($("topicStatus").value)
+  });
+  e.target.reset();
+  saveData();
+});
+
+$("studyForm")?.addEventListener("submit", e => {
+  e.preventDefault();
+  data.studyTasks.push({
+    id:newId(),
+    name:$("studyTaskName").value.trim(),
+    subjectId:$("studySubject").value,
+    duration:Number($("studyDuration").value),
+    date:$("studyDate").value || today(),
+    done:false
+  });
+  e.target.reset();
+  $("studyDate").value = today();
+  saveData();
+});
+
+$("practiceForm")?.addEventListener("submit", e => {
+  e.preventDefault();
+  data.practice.push({
+    id:newId(),
+    question:$("practiceQuestion").value.trim(),
+    answer:$("practiceAnswer").value.trim()
+  });
+  e.target.reset();
+  saveData();
+});
+
+$("examForm")?.addEventListener("submit", e => {
+  e.preventDefault();
+  data.exams.push({
+    id:newId(),
+    name:$("examName").value.trim(),
+    subjectId:$("examSubject").value,
+    date:$("examDate").value,
+    progress:Number($("examProgress").value)
+  });
+  e.target.reset();
+  saveData();
+});
+
+$("profileForm")?.addEventListener("submit", e => {
+  e.preventDefault();
+  data.profile.name = $("profileName").value.trim() || "Student";
+  data.profile.college = $("profileCollege").value.trim();
+  saveData();
+  alert("Profile saved!");
+});
+
+function exportData() {
+  const file = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(file);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "bellkit-backup.json";
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
-function resetOrbit() {
-  orbitElements.forEach(element => element.style.translate = "0px 0px");
+function resetBellkit() {
+  if (!confirm("This will delete all Bellkit data stored in this browser. Continue?")) return;
+  data = JSON.parse(JSON.stringify(defaultData));
+  saveData();
 }
 
-orbitArea.addEventListener("pointermove", moveOrbit);
-orbitArea.addEventListener("pointerleave", resetOrbit);
-orbitArea.addEventListener("touchmove", moveOrbit, {passive:true});
-orbitArea.addEventListener("touchend", resetOrbit, {passive:true});
-
-const revealObserver = new IntersectionObserver(entries => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add("visible");
-      revealObserver.unobserve(entry.target);
-    }
-  });
-}, {threshold:0.12});
-
-document.querySelectorAll(".reveal").forEach(element => revealObserver.observe(element));
-
-calculateAttendance();
+if ($("attendanceDate")) $("attendanceDate").value = today();
+if ($("studyDate")) $("studyDate").value = today();
+renderAll();
 </script>
+</main>
+</div>
 </body>
 </html>
+  
